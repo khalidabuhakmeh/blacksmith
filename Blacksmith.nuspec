@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
+    <metadata>
+        <id>Blacksmith</id>
+        <version>1.0.0</version>
+        <title>Blacksmith - IronMQ Client</title>
+        <authors>kabuhakmeh</authors>
+        <owners>kabuhakmeh</owners>
+        <licenseUrl>https://github.com/khalidabuhakmeh/blacksmith/blob/master/License.md</licenseUrl>
+        <projectUrl>http://github.com/khalidabuhakmeh/blacksmith</projectUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>An opinionated IronMQ client for .Net developers. We take care of the flow, you  take care of the Go.</description>
+        <summary>An opinionated IronMQ client for .Net developers. We take care of the flow, you take care of the Go.
+
+Checkout the Github project page to see usage and to see a sample project.</summary>
+        <copyright>khalid abuhakmeh</copyright>
+        <tags>IronMQ, Queues, API, Web, Processing</tags>
+        <dependencies>
+            <dependency id="Newtonsoft.Json" version="4.5.11" />
+        </dependencies>
+        <frameworkAssemblies>
+            <frameworkAssembly assemblyName="System.Configuration" targetFramework="" />
+            <frameworkAssembly assemblyName="System.Web" targetFramework="" />
+        </frameworkAssemblies>
+    </metadata>
+    <files>
+        <file src="content\app.config.transform" target="content\app.config.transform" />
+        <file src="content\web.config.transform" target="content\web.config.transform" />
+        <file src="Blacksmith.Core\bin\Release\Blacksmith.Core.dll" target="lib\Blacksmith.Core.dll" />
+    </files>
+</package>

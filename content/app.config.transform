@@ -1,0 +1,6 @@
+<configuration>
+    <appSettings>
+        <add key="blacksmith.projectId" value="your_project_id" />
+        <add key="blacksmith.token" value="your_oauth_token" />
+    </appSettings>
+</configuration>
