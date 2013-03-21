@@ -24,7 +24,7 @@ The Blacksmith API tried to stay as true to the IronMQ API documentation. So con
 
 http://dev.iron.io/mq/
 
-__ Note: The API is documented as well, so you will get some helpful hints in Visual Studio. __
+** Note: The API is documented as well, so you will get some helpful hints in Visual Studio. **
 
 
 Usage - Settings
@@ -48,7 +48,7 @@ Blacksmith has a fluent based interface that gives you a simple and straight for
 3. Process Item (in your code)
 4. Delete the Item from the Queue
 
-__ Blacksmith encapsulates that logic for you, so all you need to do is consume the message. Successful consumption will delete the item for you. __
+** Blacksmith encapsulates that logic for you, so all you need to do is consume the message. Successful consumption will delete the item for you. **
 
 Let's take a look at how you would create a Queue, and then process a message from that Queue.
 
@@ -107,7 +107,9 @@ Make sure you pay attention to what the timeout is for your message or else you 
 Usage - Releasing
 -------------------------------
 
-When consuming a message, you might realize you don't want to process it just yet maybe because a third party resource is down, but you may have pulled it off of the queue already. You might want to release it back to the queue and let something else pick it up. __ Note: calling release will not delete the message from the queue, so we suggest you release the message early before doing something. i.e. Charging for an order, sending emails, or deleting a resource. __
+When consuming a message, you might realize you don't want to process it just yet maybe because a third party resource is down, but you may have pulled it off of the queue already. You might want to release it back to the queue and let something else pick it up.
+
+ ** Note: calling release will not delete the message from the queue, so we suggest you release the message early before doing something. i.e. Charging for an order, sending emails, or deleting a resource. **
 
 	client
 		.Next()
