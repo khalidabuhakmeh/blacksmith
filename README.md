@@ -12,7 +12,7 @@ Sign Up Here: http://www.iron.io/mq
 Nuget
 ------------
 
-Coming Soon...
+    > Install-Package Blacksmith
 
 
 Getting Started
