@@ -12,8 +12,12 @@ Sign Up Here: http://www.iron.io/mq
 Nuget
 ------------
 
-    > Install-Package Blacksmith
+You can find Blacksmith on Nuget and start using it immediately (assuming you signed up, have you signed up yet?).
 
+
+    > Install-Package Blacksmith
+    
+    
 
 Getting Started
 --------------------
