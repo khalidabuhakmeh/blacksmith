@@ -330,6 +330,41 @@ namespace Blacksmith.Tests
             result.Should().Be("HammerTime");
         }
 
+        [Fact]
+        public void Can_tell_if_queue_is_just_empty()
+        {
+            Client.GetResponse = (e) => "{ 'messages': [ ] }";
+            Client.Queue<Stub>().IsEmpty().Should().BeTrue();
+        }
+
+        [Fact]
+        public void Can_tell_if_queue_is_empty_and_react()
+        {
+            Client.GetResponse = (e) => "{ 'messages': [ ] }";
+
+            var isEmpty = false;
+            Client.Queue<Stub>()
+                  .OnEmpty(() => isEmpty = true)
+                      .Next()
+                      .Consume((m, ctx) => Console.WriteLine("Should not be here!"));
+
+            isEmpty.Should().BeTrue();
+        }
+
+        [Fact]
+        public void Can_tell_if_a_batch_request_is_empty()
+        {
+            Client.GetResponse = (e) => "{ 'messages': [ ] }";
+
+            var isEmpty = false;
+            Client.Queue<Stub>()
+                  .OnEmpty(() => isEmpty = true)
+                      .Get(5)
+                      .ForEach(x => Console.WriteLine("should not get here"));
+
+            isEmpty.Should().BeTrue();
+        }
+
         public class Stub
         {
             public string Text { get; set; }

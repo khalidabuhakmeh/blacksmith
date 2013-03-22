@@ -13,6 +13,7 @@ namespace Blacksmith.Core
         {
             private readonly Client _client;
             protected string Name { get; set; }
+            private Action _emptyHandler;
 
             private readonly JsonSerializerSettings _settings = new JsonSerializerSettings
             {
@@ -25,6 +26,26 @@ namespace Blacksmith.Core
             {
                 _client = client;
                 Name = typeof(TMessage).GetQueueName();
+            }
+
+            /// <summary>
+            /// Use this method to handle scenarios where the queue is perceived to be empty. There may still be some defered messages in the queue or messages waiting to timeout.
+            /// </summary>
+            /// <param name="emptyHandler"></param>
+            /// <returns></returns>
+            public QueueWrapper<TMessage> OnEmpty(Action emptyHandler)
+            {
+                _emptyHandler = emptyHandler;
+                return this;
+            }
+
+            /// <summary>
+            /// Simple response to whether the queue is empty or not. Will make a request for a message, prefer using the OnEmpty construct.
+            /// </summary>
+            /// <returns></returns>
+            public bool IsEmpty()
+            {
+                 return Get(1).FirstOrDefault() == null;
             }
 
             /// <summary>
@@ -44,13 +65,18 @@ namespace Blacksmith.Core
             /// If the timeout expires before the messages are deleted, the messages will be placed back onto the queue.
             /// As a result, be sure to delete the messages after you’re done with them. Using the consume pattern, will auto delete
             /// the message for you if the consumption is successful. Otherwise the message will be placed back into the queue due to timeout.
+            /// 
+            /// Note: If the queue is empty, then your consume method will not run. Look at using OnEmpty on the queue to react appropriately.
             /// </summary>
             /// <remarks>equivalent to Get(1)</remarks>
             /// <param name="timeout">How long should the timeout be, in case of errors.</param>
             /// <returns></returns>
             public MessageConsumer<TMessage> Next(int? timeout = 60)
             {
-                return Get(1, timeout).FirstOrDefault();
+                var message = Get(1, timeout).FirstOrDefault() ??
+                              new MessageConsumer<TMessage>(this, null);
+
+                return message;
             }
 
             /// <summary>
@@ -66,7 +92,12 @@ namespace Blacksmith.Core
             {
                 var json = _client.Get(string.Format("queues/{0}/messages?n={1}&timeout={2}", Name, numberOfDocuments, timeout));
                 var queue = JsonConvert.DeserializeObject<QueueMessages>(json, _settings);
-                return queue.Messages.Select(message => new MessageConsumer<TMessage>(this, new Message<TMessage>(message)));
+                var messages = queue.Messages.Select(message => new MessageConsumer<TMessage>(this, new Message<TMessage>(message))).ToList();
+
+                if (!messages.Any() && _emptyHandler != null)
+                    _emptyHandler();
+
+                return messages;
             }
 
             /// <summary>
@@ -195,6 +226,8 @@ namespace Blacksmith.Core
 
                 return JsonConvert.DeserializeObject<Subcsription>(response);
             }
+
+            
 
         }
     }
