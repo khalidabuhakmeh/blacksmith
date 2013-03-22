@@ -365,6 +365,47 @@ namespace Blacksmith.Tests
             isEmpty.Should().BeTrue();
         }
 
+        [Fact]
+        public void Can_get_size_of_the_queue()
+        {
+            Client.GetResponse = (e) =>  "{ 'size' : '5' }";
+            Client.Queue<Stub>().Size().Should().Be(5);
+        }
+
+        [Fact]
+        public void Can_update_a_queue()
+        {
+            var endpoint = string.Empty;
+            var body = string.Empty;
+            Client.PostResponse = (e, b) => {
+                    endpoint = e;
+                    body = b;
+
+                    return
+                        @"{
+                          'id':'50eb546d3264140e8638a7e5',
+                          'name':'pushq-demo-1',
+                          'size':7,
+                          'total_messages':7,
+                          'project_id':'4fd2729368a0197d1102056b',
+                          'retries':3,
+                          'push_type':'multicast',
+                          'retries_delay':60,
+                          'subscribers':[
+                            {'url':'http://mysterious-brook-1807.herokuapp.com/ironmq_push_1'},
+                            {'url':'http://mysterious-brook-1807.herokuapp.com/ironmq_push_2'}
+                          ]
+                        }";
+                };
+
+            var result = Client.Queue<Stub>().Update(retries: 6);
+
+            result.Should().NotBeNull();
+            body.Should().NotBeEmpty();
+            endpoint.Should().Be("queues/Blacksmith.Tests.ClientTests+Stub");
+
+        }
+
         public class Stub
         {
             public string Text { get; set; }

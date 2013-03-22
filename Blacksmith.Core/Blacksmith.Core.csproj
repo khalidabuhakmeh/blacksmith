@@ -55,6 +55,7 @@
     <Compile Include="QueueWrapper.cs" />
     <Compile Include="Responses\Error.cs" />
     <Compile Include="Responses\Message.cs" />
+    <Compile Include="Responses\QueueInfo.cs" />
     <Compile Include="Responses\QueueMessages.cs" />
     <Compile Include="Responses\Subscriptions.cs" />
   </ItemGroup>

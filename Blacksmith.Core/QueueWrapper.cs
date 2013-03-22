@@ -45,7 +45,42 @@ namespace Blacksmith.Core
             /// <returns></returns>
             public bool IsEmpty()
             {
-                 return Get(1).FirstOrDefault() == null;
+                return Get(1).FirstOrDefault() == null;
+            }
+
+            /// <summary>
+            /// Returns information on the queue. Will tell you the size of the queue including messages of all states (queued, reserved, and delayed).
+            /// </summary>
+            /// <returns></returns>
+            public int Size()
+            {
+                var json = _client.Get(string.Format("queues/{0}", Name));
+                return JsonConvert.DeserializeObject<QueueInfo>(json).Size;
+            }
+
+            /// <summary>
+            /// This allows you to change the properties of a queue including setting subscribers and the push type if you want it to be a push queue.
+            /// </summary>
+            /// <param name="retries"></param>
+            /// <param name="retriesDelay"></param>
+            /// <param name="pushType"></param>
+            /// <param name="subscriberUrls"></param>
+            /// <returns></returns>
+            public QueueSettings Update(int retries = 3, int retriesDelay = 60, string pushType = "multicast",
+                                              string[] subscriberUrls = null)
+            {
+                var request = new QueueUpdate
+                {
+                    PushType = pushType,
+                    Retries = retries,
+                    RetriesDelay = retriesDelay,
+                    Subscribers = (subscriberUrls ?? new string[0]).Select(x => new Subscriber(x)).ToArray()
+                };
+                
+                var body = JsonConvert.SerializeObject(request);
+                var json = _client.Post(string.Format("queues/{0}", Name), body);
+
+                return JsonConvert.DeserializeObject<QueueSettings>(json);
             }
 
             /// <summary>
@@ -227,7 +262,7 @@ namespace Blacksmith.Core
                 return JsonConvert.DeserializeObject<Subcsription>(response);
             }
 
-            
+
 
         }
     }

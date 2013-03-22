@@ -18,6 +18,14 @@ namespace Blacksmith.Core.Responses
     [Serializable]
     public class Subscriber
     {
+        public Subscriber()
+        {}
+
+        public Subscriber(string url)
+        {
+            Url = url;
+        }
+
         [JsonProperty("url")]
         public string Url { get; set; }
     }

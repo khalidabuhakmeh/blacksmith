@@ -9,6 +9,4 @@ namespace Blacksmith.Core.Responses
         [JsonProperty("messages")]
         public Message[] Messages { get; set; }
     }
-
-   
 }
