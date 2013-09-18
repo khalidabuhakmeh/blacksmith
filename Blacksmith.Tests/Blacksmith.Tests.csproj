@@ -51,6 +51,7 @@
   <ItemGroup>
     <Compile Include="BlacksmithExtensionMethodTests.cs" />
     <Compile Include="ClientTests.cs" />
+    <Compile Include="ConfigurationWrapperTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

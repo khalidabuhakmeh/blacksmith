@@ -13,8 +13,11 @@
         <summary>An opinionated IronMQ client for .Net developers. We take care of the flow, you take care of the Go.
 
 Checkout the Github project page to see usage and to see a sample project.</summary>
-        <releaseNotes>- 1.1.0 introduces ways to get queue size and update queue programmatically.
-- 1.0.1 introduces Queue empty methods and next no longer returns null.</releaseNotes>
+        <releaseNotes>
+- 1.2.1 add the ability to optionally set fixed queue name in app.config
+		- 1.1.0 introduces ways to get queue size and update queue programmatically.
+- 1.0.1 introduces Queue empty methods and next no longer returns null.
+</releaseNotes>
         <copyright>khalid abuhakmeh</copyright>
         <tags>IronMQ, Queues, API, Web, Processing</tags>
         <dependencies>
