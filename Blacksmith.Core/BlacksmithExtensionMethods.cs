@@ -44,13 +44,30 @@ namespace Blacksmith.Core
         /// <returns></returns>
         public static string GetQueueName(this Type type)
         {
-            var attributes = type.GetCustomAttributes(typeof(QueueNameAttribute), false);
 
-            if (!attributes.Any()) 
-                return type.FullName;
 
-            var attribute = attributes.Cast<QueueNameAttribute>().First();
-            return attribute.Name;
+            var config = new ConfigurationWrapper();
+
+            
+            if (string.IsNullOrEmpty(config.OptionalFixedQueueName))
+            {
+                var attributes = type.GetCustomAttributes(typeof(QueueNameAttribute), false);
+
+                if (!attributes.Any())
+                    return type.FullName;
+
+                var attribute = attributes.Cast<QueueNameAttribute>().First();
+                return attribute.Name;
+            }
+            else
+            {
+                return config.OptionalFixedQueueName;
+            }
+            
+            
+                        
         }
     }
+
+    
 }

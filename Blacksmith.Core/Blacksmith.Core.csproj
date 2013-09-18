@@ -50,6 +50,7 @@
     <Compile Include="Attributes\QueueNameAttribute.cs" />
     <Compile Include="BlacksmithExtensionMethods.cs" />
     <Compile Include="Client.cs" />
+    <Compile Include="ConfigurationWrapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ConsumeMessageDefinition.cs" />
     <Compile Include="QueueWrapper.cs" />
