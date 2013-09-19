@@ -38,9 +38,10 @@ Blacksmith gives you two options to initialize your client. You can set it in co
 
 	blacksmith.projectId 
 	blacksmith.token
+	blacksmith.optional.fixed.queuename  // "" if not used and contained in your app.config
 	blacksmith.port  // optional
 	blacksmith.host  // optional
-
+	
 
 Usage - Hello World
 ---------------------
