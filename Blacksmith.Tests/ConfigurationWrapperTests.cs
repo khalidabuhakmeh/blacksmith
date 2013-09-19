@@ -10,14 +10,14 @@ namespace Blacksmith.Tests
         public void ProjectID_Always_Returns_A_Non_Null()
         {
             var config = new ConfigurationWrapper();
-            config.blacksmithprojectId.Should().NotBe(null);
+            config.BlacksmithProjectId.Should().NotBe(null);
         }
 
         [Fact]
         public void Token_Always_Returns_A_Non_Null()
         {
             var config = new ConfigurationWrapper();
-            config.blacksmithtoken.Should().NotBe(null);
+            config.BlacksmithToken.Should().NotBe(null);
         }
 
         [Fact]

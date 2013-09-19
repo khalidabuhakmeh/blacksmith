@@ -16,12 +16,12 @@ namespace Blacksmith.Sample
             
             if (String.IsNullOrEmpty(yourProjectId))
             {
-                yourProjectId = configCheck.blacksmithprojectId;
+                yourProjectId = configCheck.BlacksmithProjectId;
             }
 
             if (String.IsNullOrEmpty(yourtoken))
             {
-                yourtoken = configCheck.blacksmithtoken;
+                yourtoken = configCheck.BlacksmithToken;
             }
 
             var client = new Client(yourProjectId, yourtoken);

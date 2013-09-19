@@ -44,10 +44,7 @@ namespace Blacksmith.Core
         /// <returns></returns>
         public static string GetQueueName(this Type type)
         {
-
-
             var config = new ConfigurationWrapper();
-
             
             if (string.IsNullOrEmpty(config.OptionalFixedQueueName))
             {
@@ -63,9 +60,6 @@ namespace Blacksmith.Core
             {
                 return config.OptionalFixedQueueName;
             }
-            
-            
-                        
         }
     }
 
