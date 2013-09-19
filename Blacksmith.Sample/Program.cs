@@ -10,7 +10,21 @@ namespace Blacksmith.Sample
 
         static void Main(string[] args)
         {
-            var client = new Client("your_project_id", "your_token");
+            var configCheck = new ConfigurationWrapper();
+            string yourProjectId = ""; // enter your projectid here or use app.config
+            string yourtoken = ""; // enter your token or use app.config
+            
+            if (String.IsNullOrEmpty(yourProjectId))
+            {
+                yourProjectId = configCheck.blacksmithprojectId;
+            }
+
+            if (String.IsNullOrEmpty(yourtoken))
+            {
+                yourtoken = configCheck.blacksmithtoken;
+            }
+
+            var client = new Client(yourProjectId, yourtoken);
 
             var pusher = new Timer { AutoReset = true, Interval = 1000, Enabled = true };
             var one = new Timer { AutoReset = true, Interval = 2500, Enabled = true };
