@@ -1,7 +1,8 @@
 <configuration>
-    <appSettings>
-        <add key="blacksmith.projectId" value="your_project_id" />
-        <add key="blacksmith.token" value="your_oauth_token" />
-		<add key="blacksmith.optional.fixed.queuename" value="" />
-    </appSettings>
+  <appSettings>
+    <add key="blacksmith.projectId" value="your_project_id" />
+    <add key="blacksmith.token" value="your_oauth_token" />
+    <add key="blacksmith.optional.fixed.queuename" value="" />
+  </appSettings>
 </configuration>
+
