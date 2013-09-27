@@ -12,11 +12,9 @@ namespace Blacksmith.Core
             where TMessage : class
         {
             private readonly Client _client;
-            protected string Name { get; set; }
             private Action _emptyHandler;
 
-            private readonly JsonSerializerSettings _settings = new JsonSerializerSettings
-            {
+            private readonly JsonSerializerSettings _settings = new JsonSerializerSettings {
                 NullValueHandling = NullValueHandling.Ignore,
                 Formatting = Formatting.None,
                 DefaultValueHandling = DefaultValueHandling.Ignore
@@ -27,6 +25,8 @@ namespace Blacksmith.Core
                 _client = client;
                 Name = typeof(TMessage).GetQueueName();
             }
+
+            protected string Name { get; set; }
 
             /// <summary>
             /// Use this method to handle scenarios where the queue is perceived to be empty. There may still be some defered messages in the queue or messages waiting to timeout.
@@ -55,7 +55,8 @@ namespace Blacksmith.Core
             public int Size()
             {
                 var json = _client.Get(string.Format("queues/{0}", Name));
-                return JsonConvert.DeserializeObject<QueueInfo>(json).Size;
+
+                return JsonConvert.DeserializeObject<QueueInfo>(json, ConfigurationWrapper.JsonSettings).Size;
             }
 
             /// <summary>
@@ -69,18 +70,17 @@ namespace Blacksmith.Core
             public QueueSettings Update(int retries = 3, int retriesDelay = 60, string pushType = "multicast",
                                               string[] subscriberUrls = null)
             {
-                var request = new QueueUpdate
-                {
+                var request = new QueueUpdate {
                     PushType = pushType,
                     Retries = retries,
                     RetriesDelay = retriesDelay,
                     Subscribers = (subscriberUrls ?? new string[0]).Select(x => new Subscriber(x)).ToArray()
                 };
-                
-                var body = JsonConvert.SerializeObject(request);
+
+                var body = JsonConvert.SerializeObject(request, ConfigurationWrapper.JsonSettings);
                 var json = _client.Post(string.Format("queues/{0}", Name), body);
 
-                return JsonConvert.DeserializeObject<QueueSettings>(json);
+                return JsonConvert.DeserializeObject<QueueSettings>(json, ConfigurationWrapper.JsonSettings);
             }
 
             /// <summary>
@@ -157,18 +157,18 @@ namespace Blacksmith.Core
             public void Push(IEnumerable<TMessage> messages, TimeSpan? delay = null, TimeSpan? timeout = null,
                              TimeSpan? expiration = null)
             {
-                var serialized = messages.Select(JsonConvert.SerializeObject);
-                var json = JsonConvert.SerializeObject(new QueueMessages
-                {
-                    Messages = serialized.Select(msg => new Message
-                    {
-                        Body = msg,
-                        Timeout = (long)(timeout.HasValue ? timeout.Value.TotalSeconds : 0),
-                        Delay = (long)(delay.HasValue ? delay.Value.TotalSeconds : 0),
-                        ExpiresIn = (long)(expiration.HasValue ? expiration.Value.TotalSeconds : 0)
-                    }
-                    ).ToArray(),
-                }, _settings);
+                var serialized = messages.Select(msg => JsonConvert.SerializeObject(msg, ConfigurationWrapper.JsonSettings));
+
+                var json = JsonConvert.SerializeObject(
+                    new QueueMessages {
+                        Messages = serialized.Select(msg => new Message {
+                            Body = msg,
+                            Timeout = (long)(timeout.HasValue ? timeout.Value.TotalSeconds : 0),
+                            Delay = (long)(delay.HasValue ? delay.Value.TotalSeconds : 0),
+                            ExpiresIn = (long)(expiration.HasValue ? expiration.Value.TotalSeconds : 0)
+                        }
+                        ).ToArray(),
+                    }, _settings);
 
                 _client.Post(string.Format("queues/{0}/messages", Name), json);
             }
@@ -179,8 +179,10 @@ namespace Blacksmith.Core
             public void Clear()
             {
                 const string emptyJsonObject = "{}";
+
                 var response = _client.Post("queues/" + Name + "/clear", emptyJsonObject);
                 var responseObject = JsonConvert.DeserializeObject<Dictionary<string, string>>(response, _settings);
+
                 if (responseObject["msg"] != "Cleared")
                     throw new Exception(string.Format("Unknown response from REST Endpoint : {0}", response));
             }
@@ -212,6 +214,7 @@ namespace Blacksmith.Core
             {
                 var response = _client.Post(string.Format("queues/{0}/messages/{1}/touch", Name, id), "{}");
                 var responseObject = JsonConvert.DeserializeObject<Dictionary<string, string>>(response, _settings);
+
                 if (responseObject["msg"] != "Touched")
                     throw new Exception(string.Format("Unknown response from REST Endpoint : {0}", response));
             }
@@ -224,6 +227,7 @@ namespace Blacksmith.Core
             {
                 var response = _client.Post(string.Format("queues/{0}/messages/{1}/release", Name, id), "{}");
                 var responseObject = JsonConvert.DeserializeObject<Dictionary<string, string>>(response, _settings);
+
                 if (responseObject["msg"] != "Released")
                     throw new Exception(string.Format("Unknown response from REST Endpoint : {0}", response));
             }
@@ -233,7 +237,7 @@ namespace Blacksmith.Core
             /// </summary>
             /// <param name="urls"></param>
             /// <returns></returns>
-            public Subcsription Subscribe(params string[] urls)
+            public Subscription Subscribe(params string[] urls)
             {
                 if (urls == null || !urls.Any())
                     throw new ArgumentException("at least one url is required", "urls");
@@ -242,7 +246,7 @@ namespace Blacksmith.Core
                 var json = JsonConvert.SerializeObject(request);
                 var response = _client.Post(string.Format("queues/{0}/subscribers", Name), json);
 
-                return JsonConvert.DeserializeObject<Subcsription>(response);
+                return JsonConvert.DeserializeObject<Subscription>(response);
             }
 
             /// <summary>
@@ -250,7 +254,7 @@ namespace Blacksmith.Core
             /// </summary>
             /// <param name="urls"></param>
             /// <returns></returns>
-            public Subcsription Unsubscribe(params string[] urls)
+            public Subscription Unsubscribe(params string[] urls)
             {
                 if (urls == null || !urls.Any())
                     throw new ArgumentException("at least one url is required", "urls");
@@ -259,7 +263,7 @@ namespace Blacksmith.Core
                 var json = JsonConvert.SerializeObject(request);
                 var response = _client.DeleteWithBody(string.Format("queues/{0}/subscribers", Name), json);
 
-                return JsonConvert.DeserializeObject<Subcsription>(response);
+                return JsonConvert.DeserializeObject<Subscription>(response);
             }
 
 

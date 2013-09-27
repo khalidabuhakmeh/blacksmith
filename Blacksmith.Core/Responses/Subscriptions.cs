@@ -31,9 +31,9 @@ namespace Blacksmith.Core.Responses
     }
 
     [Serializable]
-    public class Subcsription
+    public class Subscription
     {
-        public Subcsription()
+        public Subscription()
         {
             Subscribers = new Subscriber[0];
         }
