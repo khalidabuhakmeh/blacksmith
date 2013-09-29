@@ -108,7 +108,7 @@ namespace Blacksmith.Core
             }
             if (response.StatusCode == HttpStatusCode.OK) return json;
 
-            var error = JsonConvert.DeserializeObject<Error>(json);
+            var error = JsonConvert.DeserializeObject<Error>(json, ConfigurationWrapper.JsonSettings);
             throw new HttpException((int)response.StatusCode, error.Message);
         }
 

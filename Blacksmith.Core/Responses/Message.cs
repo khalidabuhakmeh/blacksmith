@@ -47,7 +47,7 @@ namespace Blacksmith.Core.Responses
         [JsonIgnore]
         public T Target
         {
-            get { return JsonConvert.DeserializeObject<T>(Body); }
+            get { return JsonConvert.DeserializeObject<T>(Body, ConfigurationWrapper.JsonSettings); }
         }
     }
 }
