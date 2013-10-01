@@ -1,4 +1,6 @@
-﻿using System.Configuration;
+﻿using System;
+using System.Collections.Generic;
+using System.Configuration;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
@@ -45,5 +47,13 @@ namespace Blacksmith.Core
         /// The json settings.
         /// </value>
         public static JsonSerializerSettings JsonSettings { get; set; }
+
+        /// <summary>
+        /// Gets or sets the queue name mappings.
+        /// </summary>
+        /// <value>
+        /// The queue name mappings.
+        /// </value>
+        public static Dictionary<Type, string> QueueNameMappings { get; set; }
     }
 }
