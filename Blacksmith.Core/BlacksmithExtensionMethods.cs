@@ -51,15 +51,29 @@ namespace Blacksmith.Core
                 var attributes = type.GetCustomAttributes(typeof(QueueNameAttribute), false);
 
                 if (!attributes.Any())
-                    return type.FullName;
+                    return FindQueueNameMappingOrUseFullName(type);
 
                 var attribute = attributes.Cast<QueueNameAttribute>().First();
+
                 return attribute.Name;
             }
-            else
-            {
-                return config.OptionalFixedQueueName;
-            }
+
+            return config.OptionalFixedQueueName;
+        }
+
+        /// <summary>
+        /// Checks if the type has a mapped queue name to use; otherwise uses its full name.
+        /// </summary>
+        /// <param name="type">The type.</param>
+        /// <returns></returns>
+        private static string FindQueueNameMappingOrUseFullName(Type type)
+        {
+            string queueName;
+
+            if (!ConfigurationWrapper.QueueNameMappings.TryGetValue(type, out queueName))
+                queueName = type.FullName;
+
+            return queueName;
         }
     }
 
