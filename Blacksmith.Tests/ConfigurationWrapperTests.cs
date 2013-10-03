@@ -27,7 +27,10 @@ namespace Blacksmith.Tests
             config.OptionalFixedQueueName.Should().NotBe(null);
         }
 
-        
+        [Fact]
+        public void Queue_name_should_not_be_null()
+        {
+            ConfigurationWrapper.QueueNameMappings.Should().NotBeNull();
+        }
     }
 }
-
