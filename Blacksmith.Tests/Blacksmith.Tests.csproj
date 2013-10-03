@@ -53,6 +53,7 @@
     <Compile Include="ClientTests.cs" />
     <Compile Include="ConfigurationWrapperTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="QueueNameExternalConfigurationTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
