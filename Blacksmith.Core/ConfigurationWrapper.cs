@@ -22,6 +22,8 @@ namespace Blacksmith.Core
             JsonSettings.Converters.Add(new ExpandoObjectConverter());
             JsonSettings.Converters.Add(new IsoDateTimeConverter());
             JsonSettings.Converters.Add(new StringEnumConverter());
+
+            QueueNameMappings = new Dictionary<Type, string>();
         }
 
         public virtual string BlacksmithProjectId
