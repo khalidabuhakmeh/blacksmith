@@ -82,6 +82,19 @@ namespace Blacksmith.Core
             return new QueueWrapper<TMessage>(this);
         }
 
+        /// <summary>
+        /// Queues are based on message types, where TMessage is your class. Your class can contain anything that is serializable.
+        /// </summary>
+        /// <typeparam name="TMessage">your message</typeparam>
+        /// <param name="queueName">Name of queue if different from message typename</param>
+        /// <returns>a fluent interface to let you construct a request.</returns>
+        public QueueWrapper<TMessage> Queue<TMessage>(string queueName)
+            where TMessage : class
+        {
+            return new QueueWrapper<TMessage>(this, queueName);
+        }
+
+
         private string Request(string method, string endpoint, string body)
         {
             string path = string.Format("/{0}/projects/{1}/{2}", ApiVersion, _projectId, endpoint);
