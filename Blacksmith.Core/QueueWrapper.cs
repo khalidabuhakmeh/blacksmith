@@ -20,13 +20,20 @@ namespace Blacksmith.Core
                 DefaultValueHandling = DefaultValueHandling.Ignore
             };
 
-            public QueueWrapper(Client client)
+            
+            public QueueWrapper(Client client) : this(client, typeof(TMessage).GetQueueName()) {}
+            public QueueWrapper(Client client, string queueName)
             {
                 _client = client;
-                Name = typeof(TMessage).GetQueueName();
-            }
+                Name = queueName;
+            } 
 
-            protected string Name { get; set; }
+
+            /// <summary>
+            /// Name of queue in iron.io project
+            /// </summary>
+            public string Name { get; protected set; }
+
 
             /// <summary>
             /// Use this method to handle scenarios where the queue is perceived to be empty. There may still be some defered messages in the queue or messages waiting to timeout.
