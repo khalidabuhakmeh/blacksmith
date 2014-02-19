@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Timers;
 using Blacksmith.Core;
+using Blacksmith.Core.Attributes;
 
 namespace Blacksmith.Sample
 {
@@ -70,6 +71,7 @@ namespace Blacksmith.Sample
         }
     }
 
+    // [QueueName("QueueForMyMessage")] // Use to override automatic queue name generation from typename
     public class MyMessage
     {
         public string Text { get; set; }

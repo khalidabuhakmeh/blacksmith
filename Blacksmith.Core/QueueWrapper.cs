@@ -29,7 +29,11 @@ namespace Blacksmith.Core
             } 
 
 
-            protected string Name { get; set; }
+            /// <summary>
+            /// Name of queue in iron.io project
+            /// </summary>
+            public string Name { get; protected set; }
+
 
             /// <summary>
             /// Use this method to handle scenarios where the queue is perceived to be empty. There may still be some defered messages in the queue or messages waiting to timeout.
