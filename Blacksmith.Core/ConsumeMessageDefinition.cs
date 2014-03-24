@@ -6,16 +6,15 @@ namespace Blacksmith.Core
 {
     public partial class Client
     {
-        public class MessageConsumer<TMessage>
-            where TMessage : class
+        public class MessageConsumer<TMessage> : IMessageConsumer<TMessage> where TMessage : class
         {
-            private readonly QueueWrapper<TMessage> _queue;
+            private readonly IQueueWrapper<TMessage> _queue;
             private bool _releaseOnError;
             private double? _touchInterval;
             public Message<TMessage> Payload { get; private set; }
             protected Action<Exception> ExceptionHandler { get; set; }
 
-            public MessageConsumer(QueueWrapper<TMessage> queue, Message<TMessage> payload)
+            public MessageConsumer(IQueueWrapper<TMessage> queue, Message<TMessage> payload)
             {
                 _queue = queue;
                 Payload = payload;
@@ -26,7 +25,7 @@ namespace Blacksmith.Core
             /// </summary>
             /// <param name="exceptionHandler"></param>
             /// <returns></returns>
-            public MessageConsumer<TMessage> OnError(Action<Exception> exceptionHandler)
+            public virtual IMessageConsumer<TMessage> OnError(Action<Exception> exceptionHandler)
             {
                 ExceptionHandler = exceptionHandler;
                 return this;
@@ -36,7 +35,7 @@ namespace Blacksmith.Core
             /// If something goes wrong, don't wait for the timeout to kick in, just release the message immediately.
             /// </summary>
             /// <returns></returns>
-            public MessageConsumer<TMessage> ReleaseImmediatelyOnError()
+            public virtual IMessageConsumer<TMessage> ReleaseImmediatelyOnError()
             {
                 _releaseOnError = true;
                 return this;
@@ -50,7 +49,7 @@ namespace Blacksmith.Core
             /// <param name="milliseconds"></param>
             /// <param name="minutes"></param>
             /// <returns></returns>
-            public MessageConsumer<TMessage> KeepTouching(int seconds = 0, int milliseconds = 0, int minutes = 0)
+            public virtual IMessageConsumer<TMessage> KeepTouching(int seconds = 0, int milliseconds = 0, int minutes = 0)
             {
                 _touchInterval = new TimeSpan(0, 0, minutes, seconds, milliseconds).TotalMilliseconds;
                 return this;
@@ -60,7 +59,7 @@ namespace Blacksmith.Core
             /// Use this method to consume your message. If this is successful (no exceptions), the message will be auto-deleted from the queue.
             /// </summary>
             /// <param name="action"></param>
-            public void Consume(Action<Message<TMessage>, ConsumingContext> action)
+            public virtual void Consume(Action<Message<TMessage>, ConsumingContext> action)
             {
                 if (Payload == null)
                     return;
@@ -96,12 +95,12 @@ namespace Blacksmith.Core
             /// </summary>
             public class ConsumingContext
             {
-                private readonly QueueWrapper<TMessage> _queue;
+                private readonly IQueueWrapper<TMessage> _queue;
                 private readonly Message<TMessage> _message;
 
                 public bool WasReleased { get; private set; }
 
-                public ConsumingContext(QueueWrapper<TMessage> queue, Message<TMessage> message)
+                public ConsumingContext(IQueueWrapper<TMessage> queue, Message<TMessage> message)
                 {
                     _queue = queue;
                     _message = message;

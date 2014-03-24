@@ -8,8 +8,8 @@ namespace Blacksmith.Core
 {
     public partial class Client
     {
-        public class QueueWrapper<TMessage>
-            where TMessage : class
+        public class QueueWrapper<TMessage> 
+            : IQueueWrapper<TMessage> where TMessage : class
         {
             private readonly Client _client;
             private Action _emptyHandler;
@@ -32,7 +32,7 @@ namespace Blacksmith.Core
             /// <summary>
             /// Name of queue in iron.io project
             /// </summary>
-            public string Name { get; protected set; }
+            public virtual string Name { get; protected set; }
 
 
             /// <summary>
@@ -40,7 +40,7 @@ namespace Blacksmith.Core
             /// </summary>
             /// <param name="emptyHandler"></param>
             /// <returns></returns>
-            public QueueWrapper<TMessage> OnEmpty(Action emptyHandler)
+            public virtual QueueWrapper<TMessage> OnEmpty(Action emptyHandler)
             {
                 _emptyHandler = emptyHandler;
                 return this;
@@ -50,7 +50,7 @@ namespace Blacksmith.Core
             /// Simple response to whether the queue is empty or not. Will make a request for a message, prefer using the OnEmpty construct.
             /// </summary>
             /// <returns></returns>
-            public bool IsEmpty()
+            public virtual bool IsEmpty()
             {
                 return Get(1).FirstOrDefault() == null;
             }
@@ -59,7 +59,7 @@ namespace Blacksmith.Core
             /// Returns information on the queue. Will tell you the size of the queue including messages of all states (queued, reserved, and delayed).
             /// </summary>
             /// <returns></returns>
-            public int Size()
+            public virtual int Size()
             {
                 var json = _client.Get(string.Format("queues/{0}", Name));
 
@@ -74,7 +74,7 @@ namespace Blacksmith.Core
             /// <param name="pushType"></param>
             /// <param name="subscriberUrls"></param>
             /// <returns></returns>
-            public QueueSettings Update(int retries = 3, int retriesDelay = 60, string pushType = "multicast",
+            public virtual QueueSettings Update(int retries = 3, int retriesDelay = 60, string pushType = "multicast",
                                               string[] subscriberUrls = null)
             {
                 var request = new QueueUpdate {
@@ -95,7 +95,7 @@ namespace Blacksmith.Core
             /// </summary>
             /// <param name="numberOfDocuments"></param>
             /// <returns></returns>
-            public IEnumerable<Message<TMessage>> Peek(int numberOfDocuments = 1)
+            public virtual IEnumerable<Message<TMessage>> Peek(int numberOfDocuments = 1)
             {
                 var json = _client.Get(string.Format("queues/{0}/messages/peek?n={1}", Name, numberOfDocuments));
                 var queue = JsonConvert.DeserializeObject<QueueMessages>(json, _settings);
@@ -113,7 +113,7 @@ namespace Blacksmith.Core
             /// <remarks>equivalent to Get(1)</remarks>
             /// <param name="timeout">How long should the timeout be, in case of errors.</param>
             /// <returns></returns>
-            public MessageConsumer<TMessage> Next(int? timeout = 60)
+            public virtual MessageConsumer<TMessage> Next(int? timeout = 60)
             {
                 var message = Get(1, timeout).FirstOrDefault() ??
                               new MessageConsumer<TMessage>(this, null);
@@ -130,7 +130,7 @@ namespace Blacksmith.Core
             /// <param name="numberOfDocuments">number of documents you would like to process.</param>
             /// <param name="timeout">How long should the timeout be, in case of errors.</param>
             /// <returns></returns>
-            public IEnumerable<MessageConsumer<TMessage>> Get(int? numberOfDocuments, int? timeout = 60)
+            public virtual IEnumerable<MessageConsumer<TMessage>> Get(int? numberOfDocuments, int? timeout = 60)
             {
                 var json = _client.Get(string.Format("queues/{0}/messages?n={1}&timeout={2}", Name, numberOfDocuments, timeout));
                 var queue = JsonConvert.DeserializeObject<QueueMessages>(json, _settings);
@@ -149,7 +149,7 @@ namespace Blacksmith.Core
             /// <param name="delay">delays defer the visiblity of the message. Max 7 days.</param>
             /// <param name="timeout">timeout is the expected time it should take to process the message. Max 24 hours</param>
             /// <param name="expiration">when does the message become invalid. Max 30 days</param>
-            public void Push(TMessage message, TimeSpan? delay = null, TimeSpan? timeout = null, TimeSpan? expiration = null)
+            public virtual void Push(TMessage message, TimeSpan? delay = null, TimeSpan? timeout = null, TimeSpan? expiration = null)
             {
                 Push(new[] { message }, delay, timeout, expiration);
             }
@@ -161,7 +161,7 @@ namespace Blacksmith.Core
             /// <param name="delay">delays defer the visiblity of the message. Max 7 days.</param>
             /// <param name="timeout">timeout is the expected time it should take to process the message. Max 24 hours</param>
             /// <param name="expiration">when does the message become invalid. Max 30 days</param>
-            public void Push(IEnumerable<TMessage> messages, TimeSpan? delay = null, TimeSpan? timeout = null,
+            public virtual void Push(IEnumerable<TMessage> messages, TimeSpan? delay = null, TimeSpan? timeout = null,
                              TimeSpan? expiration = null)
             {
                 var serialized = messages.Select(msg => JsonConvert.SerializeObject(msg, ConfigurationWrapper.JsonSettings));
@@ -183,7 +183,7 @@ namespace Blacksmith.Core
             /// <summary>
             /// This call deletes all messages on a queue, whether they are reserved or not.
             /// </summary>
-            public void Clear()
+            public virtual void Clear()
             {
                 const string emptyJsonObject = "{}";
 
@@ -197,7 +197,7 @@ namespace Blacksmith.Core
             /// <summary>
             /// This call deletes a message queue and all its messages. DANGER!
             /// </summary>
-            public void Destroy()
+            public virtual void Destroy()
             {
                 _client.Delete(string.Format("queues/{0}", Name));
             }
@@ -208,7 +208,7 @@ namespace Blacksmith.Core
             /// <param name="id">Message Identifier</param>
             /// <exception cref="System.Web.HttpException">Thown if the IronMQ service returns a status other than 200 OK. </exception>
             /// <exception cref="System.IO.IOException">Thrown if there is an error accessing the IronMQ server.</exception>
-            public void Delete(string id)
+            public virtual void Delete(string id)
             {
                 _client.Delete(string.Format("queues/{0}/messages/{1}", Name, id));
             }
@@ -217,7 +217,7 @@ namespace Blacksmith.Core
             /// Touching a reserved message extends its timeout by the duration specified when the message was created, which is 60 seconds by default.
             /// </summary>
             /// <param name="id"></param>
-            public void Touch(string id)
+            public virtual void Touch(string id)
             {
                 var response = _client.Post(string.Format("queues/{0}/messages/{1}/touch", Name, id), "{}");
                 var responseObject = JsonConvert.DeserializeObject<Dictionary<string, string>>(response, _settings);
@@ -230,7 +230,7 @@ namespace Blacksmith.Core
             /// Releasing a reserved message unreserves the message and puts it back on the queue as if the message had timed out.
             /// </summary>
             /// <param name="id"></param>
-            public void Release(string id)
+            public virtual void Release(string id)
             {
                 var response = _client.Post(string.Format("queues/{0}/messages/{1}/release", Name, id), "{}");
                 var responseObject = JsonConvert.DeserializeObject<Dictionary<string, string>>(response, _settings);
@@ -244,7 +244,7 @@ namespace Blacksmith.Core
             /// </summary>
             /// <param name="urls"></param>
             /// <returns></returns>
-            public Subscription Subscribe(params string[] urls)
+            public virtual Subscription Subscribe(params string[] urls)
             {
                 if (urls == null || !urls.Any())
                     throw new ArgumentException("at least one url is required", "urls");
@@ -261,7 +261,7 @@ namespace Blacksmith.Core
             /// </summary>
             /// <param name="urls"></param>
             /// <returns></returns>
-            public Subscription Unsubscribe(params string[] urls)
+            public virtual Subscription Unsubscribe(params string[] urls)
             {
                 if (urls == null || !urls.Any())
                     throw new ArgumentException("at least one url is required", "urls");

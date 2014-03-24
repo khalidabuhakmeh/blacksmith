@@ -8,7 +8,38 @@ using Newtonsoft.Json;
 
 namespace Blacksmith.Core
 {
-    public partial class Client
+    public interface IClient
+    {
+        string Host { get; }
+        int Port { get; }
+
+        /// <summary>
+        /// Get a list of all queues in a project. By default, 30 queues are listed at a time. To see more, use the page parameter or the per_page parameter. Up to 100 queues may be listed on a single page.
+        /// </summary>
+        /// <param name="page"></param>
+        /// <param name="perPage"></param>
+        /// <returns></returns>
+        IList<string> Queues(int page = 0, int perPage = 30);
+
+        /// <summary>
+        /// Queues are based on message types, where TMessage is your class. Your class can contain anything that is serializable.
+        /// </summary>
+        /// <typeparam name="TMessage">your message</typeparam>
+        /// <returns>a fluent interface to let you construct a request.</returns>
+        IQueueWrapper<TMessage> Queue<TMessage>()
+            where TMessage : class;
+
+        /// <summary>
+        /// Queues are based on message types, where TMessage is your class. Your class can contain anything that is serializable.
+        /// </summary>
+        /// <typeparam name="TMessage">your message</typeparam>
+        /// <param name="queueName">Name of queue if different from message typename</param>
+        /// <returns>a fluent interface to let you construct a request.</returns>
+        IQueueWrapper<TMessage> Queue<TMessage>(string queueName)
+            where TMessage : class;
+    }
+
+    public partial class Client : IClient
     {
         private const string Protocol = "https";
         private const string HOST = "mq-aws-us-east-1.iron.io";
@@ -61,7 +92,7 @@ namespace Blacksmith.Core
         /// <param name="page"></param>
         /// <param name="perPage"></param>
         /// <returns></returns>
-        public IList<string> Queues(int page = 0, int perPage = 30)
+        public virtual IList<string> Queues(int page = 0, int perPage = 30)
         {
             var url = string.Format("queues?page={0}&per_page={1}", page, perPage);
 
@@ -76,7 +107,7 @@ namespace Blacksmith.Core
         /// </summary>
         /// <typeparam name="TMessage">your message</typeparam>
         /// <returns>a fluent interface to let you construct a request.</returns>
-        public QueueWrapper<TMessage> Queue<TMessage>()
+        public virtual IQueueWrapper<TMessage> Queue<TMessage>()
             where TMessage : class
         {
             return new QueueWrapper<TMessage>(this);
@@ -88,14 +119,14 @@ namespace Blacksmith.Core
         /// <typeparam name="TMessage">your message</typeparam>
         /// <param name="queueName">Name of queue if different from message typename</param>
         /// <returns>a fluent interface to let you construct a request.</returns>
-        public QueueWrapper<TMessage> Queue<TMessage>(string queueName)
+        public virtual IQueueWrapper<TMessage> Queue<TMessage>(string queueName)
             where TMessage : class
         {
             return new QueueWrapper<TMessage>(this, queueName);
         }
 
 
-        private string Request(string method, string endpoint, string body)
+        protected virtual string Request(string method, string endpoint, string body)
         {
             string path = string.Format("/{0}/projects/{1}/{2}", ApiVersion, _projectId, endpoint);
             string uri = string.Format("{0}://{1}:{2}{3}", Protocol, this.Host, this.Port, path);
