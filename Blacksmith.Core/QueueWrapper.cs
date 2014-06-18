@@ -72,15 +72,17 @@ namespace Blacksmith.Core
             /// <param name="retries"></param>
             /// <param name="retriesDelay"></param>
             /// <param name="pushType"></param>
+            /// <param name="errorQueue"></param> 
             /// <param name="subscriberUrls"></param>
             /// <returns></returns>
-            public virtual QueueSettings Update(int retries = 3, int retriesDelay = 60, string pushType = "multicast",
+            public virtual QueueSettings Update(int retries = 3, int retriesDelay = 60, string pushType = "multicast", string errorQueue = null,
                                               string[] subscriberUrls = null)
             {
                 var request = new QueueUpdate {
                     PushType = pushType,
                     Retries = retries,
                     RetriesDelay = retriesDelay,
+                    ErrorQueue = errorQueue,
                     Subscribers = (subscriberUrls ?? new string[0]).Select(x => new Subscriber(x)).ToArray()
                 };
 
