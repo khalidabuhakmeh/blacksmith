@@ -36,9 +36,10 @@ namespace Blacksmith.Core
         /// <param name="retries"></param>
         /// <param name="retriesDelay"></param>
         /// <param name="pushType"></param>
+        /// <param name="errorQueue"></param>
         /// <param name="subscriberUrls"></param>
         /// <returns></returns>
-        QueueSettings Update(int retries = 3, int retriesDelay = 60, string pushType = "multicast",
+        QueueSettings Update(int retries = 3, int retriesDelay = 60, string pushType = "multicast", string errorQueue = null,
             string[] subscriberUrls = null);
 
         /// <summary>

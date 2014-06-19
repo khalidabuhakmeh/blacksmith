@@ -24,6 +24,9 @@ namespace Blacksmith.Core.Responses
         [DefaultValue("multicast")]
         [JsonProperty("push_type", DefaultValueHandling = DefaultValueHandling.Ignore)]
         public string PushType { get; set; }
+
+        [JsonProperty("error_queue", DefaultValueHandling = DefaultValueHandling.Ignore)]
+        public string ErrorQueue { get; set; }
     }
 
     public class QueueSettings
@@ -35,6 +38,9 @@ namespace Blacksmith.Core.Responses
 
         [JsonProperty("subscribers")]
         public Subscriber[] Subscribers { get; set; }
+
+         [JsonProperty("error_queue")]
+        public string ErrorQueue { get; set; }
 
         [DefaultValue(3)]
         [JsonProperty("retries")]

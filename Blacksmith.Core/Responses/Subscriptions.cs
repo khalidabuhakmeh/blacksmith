@@ -54,6 +54,8 @@ namespace Blacksmith.Core.Responses
         public string PushType { get; set; }
         [JsonProperty("retries_delay")]
         public int RetriesDelay { get; set; }
+        [JsonProperty("error_queue")]
+        public string ErrorQueue { get; set; }
         [JsonProperty("subscribers")]
         public Subscriber[] Subscribers { get; set; }
     }
