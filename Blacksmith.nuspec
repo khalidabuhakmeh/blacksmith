@@ -2,7 +2,7 @@
 <package xmlns="http://schemas.microsoft.com/packaging/2011/08/nuspec.xsd">
     <metadata>
         <id>Blacksmith</id>
-        <version>1.4.0</version>
+        <version>1.4.1</version>
         <title>Blacksmith - IronMQ Client</title>
         <authors>kabuhakmeh</authors>
         <owners>kabuhakmeh</owners>
@@ -13,15 +13,14 @@
         <summary>An opinionated IronMQ client for .Net developers. We take care of the flow, you take care of the Go.
 
 Checkout the Github project page to see usage and to see a sample project.</summary>
-        <releaseNotes>
-        -1.4.0 more interfaces and virtual methods for unit testing purposes.
+        <releaseNotes>- 1.4.1 added error queue settings
+-1.4.0 more interfaces and virtual methods for unit testing purposes.
         -1.3.2 more changes to make queue names configurable :)
         -1.3.1 fixed issue with queue names
         -1.3.0 upgraded to latest JSON.NET (5.0.6) and added ability to enter queue names in configuration wrapper.
 - 1.2.1 add the ability to optionally set fixed queue name in app.config
 		- 1.1.0 introduces ways to get queue size and update queue programmatically.
-- 1.0.1 introduces Queue empty methods and next no longer returns null.
-</releaseNotes>
+- 1.0.1 introduces Queue empty methods and next no longer returns null.</releaseNotes>
         <copyright>khalid abuhakmeh</copyright>
         <tags>IronMQ, Queues, API, Web, Processing</tags>
         <dependencies>
