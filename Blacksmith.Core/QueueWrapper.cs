@@ -76,14 +76,14 @@ namespace Blacksmith.Core
             /// <param name="subscriberUrls"></param>
             /// <returns></returns>
             public virtual QueueSettings Update(int retries = 3, int retriesDelay = 60, string pushType = "multicast", string errorQueue = null,
-                                              string[] subscriberUrls = null)
+                                              Subscriber[] subscribers = null)
             {
                 var request = new QueueUpdate {
                     PushType = pushType,
                     Retries = retries,
                     RetriesDelay = retriesDelay,
                     ErrorQueue = errorQueue,
-                    Subscribers = (subscriberUrls ?? new string[0]).Select(x => new Subscriber(x)).ToArray()
+                    Subscribers = (subscribers ?? new Subscriber[0]).Select(x => new Subscriber(x.Url, x.Headers)).ToArray()
                 };
 
                 var body = JsonConvert.SerializeObject(request, ConfigurationWrapper.JsonSettings);
@@ -246,11 +246,11 @@ namespace Blacksmith.Core
             /// </summary>
             /// <param name="urls"></param>
             /// <returns></returns>
-            public virtual Subscription Subscribe(params string[] urls)
+            public virtual Subscription Subscribe(Subscriber[] subscribers)
             {
-                if (urls == null || !urls.Any())
-                    throw new ArgumentException("at least one url is required", "urls");
-                var request = new Subscriptions { Subscribers = urls.Select(x => new Subscriber { Url = x }).ToArray() };
+                if (subscribers == null || !subscribers.Any())
+                    throw new ArgumentException("at least one subscriber is required", "urls");
+                var request = new Subscriptions { Subscribers = subscribers.Select(x => new Subscriber { Url = x.Url, Headers = x.Headers }).ToArray() };
 
                 var json = JsonConvert.SerializeObject(request);
                 var response = _client.Post(string.Format("queues/{0}/subscribers", Name), json);

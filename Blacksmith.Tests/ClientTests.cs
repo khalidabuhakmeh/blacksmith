@@ -6,6 +6,8 @@ using Blacksmith.Core;
 using Blacksmith.Core.Attributes;
 using FluentAssertions;
 using Xunit;
+using Blacksmith.Core.Responses;
+using System.Collections.Generic;
 
 namespace Blacksmith.Tests
 {
@@ -201,8 +203,8 @@ namespace Blacksmith.Tests
                     }";
                 };
 
-
-            var subscriptions = Client.Queue<Stub>().Subscribe("http://localhost");
+            var headers = new Dictionary<string, string>() { { "Content-Type", "application/json" } };
+            var subscriptions = Client.Queue<Stub>().Subscribe(new Subscriber("http://localhost", headers));
             endpoint.Should().Be("queues/Blacksmith.Tests.ClientTests+Stub/subscribers");
             subscriptions.Should().NotBeNull();
             subscriptions.TotalMessages.Should().Be(7);
