@@ -40,7 +40,7 @@ namespace Blacksmith.Core
         /// <param name="subscriberUrls"></param>
         /// <returns></returns>
         QueueSettings Update(int retries = 3, int retriesDelay = 60, string pushType = "multicast", string errorQueue = null,
-            string[] subscriberUrls = null);
+            Subscriber[] subscribers = null);
 
         /// <summary>
         /// Peeking at a queue returns the next messages on the queue, but it does not reserve them. Don't use this for processing messages, use Next or Get.
@@ -127,7 +127,7 @@ namespace Blacksmith.Core
         /// </summary>
         /// <param name="urls"></param>
         /// <returns></returns>
-        Subscription Subscribe(params string[] urls);
+        Subscription Subscribe(params Subscriber[] subscribers);
 
         /// <summary>
         /// Removes subscribers (HTTP endpoints) to a queue. This is for Push Queues only.

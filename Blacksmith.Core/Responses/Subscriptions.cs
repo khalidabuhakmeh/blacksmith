@@ -1,5 +1,6 @@
 ﻿using System;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace Blacksmith.Core.Responses
 {
@@ -26,8 +27,17 @@ namespace Blacksmith.Core.Responses
             Url = url;
         }
 
+        public Subscriber(string url, Dictionary<string, string> headers)
+        {
+            Url = url;
+            Headers = headers;
+        }
+
         [JsonProperty("url")]
         public string Url { get; set; }
+
+        [JsonProperty("headers")]
+        public dynamic Headers { get; set; }
     }
 
     [Serializable]
